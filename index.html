@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogg</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Blogg</h1>
+    </header>
+    <main>
+        <section id="findPost">
+
+            <label>Sök inlägg
+                <input type="text" name = "searchPost" id="searchPost">
+
+            </label>
+            
+            <label>Sök efter taggar
+                <input type="text" name="searchTags" id="searchTags">
+            </label>
+            
+            
+            <label for="sortPosts">Sortera inlägg</label>
+            <select name="sortPosts" id="sortPosts">
+                <option value="default">Senast tillagd</option>
+                <option value="sortByViews">Flest visningar</option>
+                <option value="sortByComments">Flest kommentarer</option>
+            </select>
+        </section>
+
+        <p id="message"></p>
+
+        <section id="postsDisplay">
+            <!-- all posts here -->
+        </section>
+    </main>
+
+    <footer>
+
+    </footer>
+</body>
+</html>
