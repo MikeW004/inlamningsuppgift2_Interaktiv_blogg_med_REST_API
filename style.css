@@ -1,7 +1,222 @@
 *{
-    margin: 0;
     box-sizing: border-box;
+    margin: 0;
+    scrollbar-gutter: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    color: var(--text-color);
 }
-.hidden{
-    display:none;
+:root{
+    font-size: 14px;
+    --primary-bg: rgb(247, 238, 222);
+    --secondary-bg: rgb(200, 194, 182);
+    --text-color: rgb(46, 39, 24);
+}
+body{
+    background: var(--primary-bg);
+}
+header{
+    padding: .5rem;
+}
+h1{
+    width: fit-content;
+    margin: 0 auto;
+}
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#findPost{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: .5rem;
+    background: var(--secondary-bg);
+    border-radius: 3px;
+    border: 1px solid rgba(46, 39, 24, .1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    
+}
+#findPost *{
+    width: fit-content;
+    margin: .25rem;
+    padding: .25rem;
+}
+#catalog{
+    background: var(--secondary-bg);
+    padding: .5rem;
+    width: 90vw;
+    min-height: 30vh;
+    height: fit-content;
+    max-height: 100vh;
+    height: 70vh;
+    margin: 1rem;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    justify-items: center;
+    border-radius: 5px;
+    border: 1px solid rgba(46, 39, 24, .1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    
+}
+.post-card{
+    min-width: 25vh;
+    width: fit-content;
+    max-width: 40vh;
+    min-height: 45vw;
+    max-height: 35vw;
+    background: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    word-break: break-word;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+    position: relative;
+    border-radius: 5px;
+    border: 1px solid rgba(46, 39, 24, .4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+   
+}
+.post-card *{
+    background: var(--primary-bg);
+    border-radius: 5px;
+}
+.post-card h4{
+    width: 90%;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(46, 39, 24, .4);
+    border-radius: 0;
+}
+.post-card p{
+    width: 90%;
+    height: fit-content;
+    max-height: 60%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(46, 39, 24, .2);
+    border-radius: 0;
+    align-self: center;
+}
+.card-bottom-panel{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+  
+}
+.card-stats{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .75rem;
+    width: 100%;
+}
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    margin: .25rem;
+}
+.button{
+    background: rgba(151, 128, 77, .5);
+    color: var(--text-color);
+    width: fit-content;
+    font-size: .75rem;
+    margin: 0 auto;
+    border: 1px solid rgba(46, 39, 24, .4);
+    border-radius: 2px;
+}
+.button.delete{
+    background-color: rgb(98, 71, 39);
+    color: rgb(255, 205, 205);
+}
+.editingContainer{
+    display: flex;
+    position: absolute;
+    height: fit-content;
+    width: 100%;
+    border: 1px solid black;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.editingContainer *{
+    width: 100%;
+    
+}
+
+#changeBody{
+    height: 4rem;
+    overflow-y: auto;
+    
+}
+.editingContainer.hidden{
+    display: none;
+}
+
+footer{
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid black;
+}
+
+
+@media all and (min-width: 480px){
+    :root{
+    font-size: 16px;
+    }
+
+    #catalog{
+    grid-template-columns: repeat(3, 1fr);
+    }
+
+    .post-card{
+    min-width: 20vh;
+    max-width: 40vh;
+    min-height: 30vw;
+    max-height: 35vw;
+    }
+    .post-card p{
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    }
+}
+
+@media all and (min-width: 768px){
+    :root{
+    font-size: 16px;
+    }
+
+    #catalog{
+    grid-template-columns: repeat(4, 1fr);
+    }
+    .post-card{
+    min-width: 20vh;
+    max-width: 40vh;
+    min-height: 20vw;
+    max-height: 25vw;
+    }
+    .post-card p{
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    }
+    
 }

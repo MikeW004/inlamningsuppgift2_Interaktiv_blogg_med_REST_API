@@ -3,44 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogg</title>
+    <title>Blog</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Blogg</h1>
+        <h1>Blog</h1>
     </header>
     <main>
         <section id="findPost">
 
-            <label>Sök inlägg
+            <label>Search Post
                 <input type="text" name = "searchPost" id="searchPost">
 
             </label>
             
-            <label>Sök efter taggar
+            <label>Search tags
                 <input type="text" name="searchTags" id="searchTags">
             </label>
             
             
-            <label for="sortPosts">Sortera inlägg</label>
+            <label for="sortPosts">Sort posts</label>
             <select name="sortPosts" id="sortPosts">
-                <option value="default">Senast tillagd</option>
-                <option value="sortByViews">Flest visningar</option>
-                <option value="sortByComments">Flest kommentarer</option>
+                <option value="default">First added</option>
+                <option value="sortByViews">Most viewed</option>
+                <option value="sortByLikes">Most Liked</option>
             </select>
         </section>
 
         <p id="message"></p>
-
-        <section id="postsDisplay">
-            <!-- all posts here -->
+        <p>Posts <span id="postCount"></span></p>
+        <section id="catalog">
+        
         </section>
     </main>
 
     <footer>
-
+        <p>Michael ~ 2026</p>
     </footer>
 </body>
 </html>

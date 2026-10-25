@@ -1,221 +1,235 @@
-//FRÅGA ALEX
-    //Ska man kunna filtrera mer än 1 tag åt gången?
-const displayElement = document.querySelector("#postsDisplay");
+const catalog = document.querySelector("#catalog");
 const messageElement = document.querySelector("#message");
 const searchPost = document.querySelector("#searchPost");
-const searchTags = document.querySelector("#searchTags");
-let posts;
+const sortCatalog = document.querySelector("#sortPosts");
+const countElement = document.querySelector("#postCount");
 const filter = 
-{
-    titleSearch: "",
-    tagsSearch: ""
-};
+    {
+    searchText: "",
+    searchTags: ""
+    };
 
-function enableFilters(posts){
-    searchPost.addEventListener("input", (e) => {
-            filter.titleSearch = e.target.value;
-            filteredPosts(filter, posts);
-    });
-    searchTags.addEventListener("input", (e) => {
-        filter.tagsSearch = e.target.value;
-        filteredPosts(filter, posts);
-    })
-}
-function filteredPosts(filter, posts){
-    const updatedPosts = posts.filter(post => {
-        const matchText = post.title.toLowerCase().trim().includes(filter.titleSearch.toLowerCase().trim())  || !filter.titleSearch;
-        const matchTags = post.tags.includes(filter.tagsSearch.toLowerCase().trim()) || !filter.tagsSearch;
-        
-        return matchText && matchTags;
-    });
-    console.log(updatedPosts);
-    displayElement.innerHTML = "";
-    updatedPosts.forEach(post => {
-        renderPostElements(post, posts);
-       
-    });
 
-}
-//RUN IT!
-renderAll();
+renderPosts();
 
-//FUNCTIONS
 function showMessage(message){
     messageElement.textContent = message;
 }
-async function renderAll(){
+async function renderPosts(){
+    const postInfo = await getPostsInfo();
+    const posts = postInfo.posts;
+    const comments = postInfo.comments;
     
+    posts.forEach((post) => {
+        renderPostElements(post, posts, comments);
+        countElement.textContent = posts.length;
+    });
+
+    searchPost.addEventListener("input", (e) => {
+        filter.searchText = e.target.value;
+        filterPosts(posts, comments, filter);
+    })
+    sortCatalog.addEventListener("change", (e) => {
+        catalog.innerHTML = "";
+        sortPosts(e.target.value, comments);
+    })
+    
+
+}
+async function getPostsInfo(){
     try{
-        const response = await fetch(`https://dummyjson.com/posts?limit=10`);
-        if(!response.ok){
-            throw new Error(response.status);
+        showMessage("Loading posts...")
+        const [postResponse, commentsResponse] = await Promise.all([
+            fetch(`https://dummyjson.com/posts?limit=15`), 
+            fetch(`https://dummyjson.com/comments?limit=15`)
+        ]);
+        if(!postResponse.ok){
+            throw new Error(console.log(postResponse.statusText));
         }
-        data = await response.json();
-        posts = data.posts
+        if(!commentsResponse.ok){
+            throw new Error(console.log(commentsResponse.statusText));
+        }
+        const postData = await postResponse.json();
+        const commentsData = await commentsResponse.json();
+        const posts = postData.posts;
+        const comments = commentsData.comments;
+        showMessage("");
+        return {posts, comments};
     }catch(error){
-        showMessage("Blogg inlägg ej tillgängliga")
-    };
-    renderPosts(posts);
-    enableFilters(posts);
-}
-
-function renderPosts(posts){
-    posts.forEach(post => {
-        renderPostElements(post, posts);
-       
-    })
-    
-
-}
-async function renderPostElements(post, posts){
-    const postElement = document.createElement("div");
-    const titleElement = document.createElement("h4");
-    const bodyElement = document.createElement("p");
-    const viewsElement = document.createElement("p");
-    const tagsElement = document.createElement("p");
-    const editField = createEditField(post);
-    const editBtn = createEditBtn(editField);
-    const removeBtn = await createRemoveBtn(post, posts,postElement);
-    if(!post.views){
-        post.views = 0;
+        showMessage("Unable to load posts..");
+        console.log(error)
     }
-    titleElement.textContent = post.title;
-    bodyElement.textContent = post.body;
-    viewsElement.textContent = `Views: ${post.views}`;
-    tagsElement.textContent = post.tags
-
-    postElement.appendChild(titleElement);
-    postElement.appendChild(viewsElement);
-    postElement.appendChild(bodyElement);
-    postElement.appendChild(editField);
-    postElement.appendChild(editBtn);
-    postElement.appendChild(removeBtn);
-    postElement.appendChild(tagsElement);
-    displayElement.appendChild(postElement);//härifrån är editForm tillgänglig
     
-
-    titleElement.addEventListener("click", () => {
-        postPage(post);
-    });
-    
-    editPost(post, posts);
-      //lyssnar på form, patchar till api, uppdaterar posts och kör renderPostElements
-    
-
 }
 
-async function createRemoveBtn(post, posts,postElement){
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Delete";
+async function renderPostElements(post, posts, comments){
+    const postComments = comments.filter(comment => comment.PostId === post.id);
+    const postElement = document.createElement("div");
+    postElement.classList.add("post-card");
+    postElement.innerHTML = `
+        <h4>${post.title}</h4>
+                <p>${post.body}</p>
+                <div class ="card-bottom-panel">
+                    <p class="card-stats">
+                        <span>views: ${post.views}</span> 
+                        <span>Likes: ${post.reactions.likes}</span>
+                        <span>Comments: ${postComments.length}</span>
+                    </p>
 
-    removeBtn.addEventListener("click", async () => {
-        
-        try{
-            const response = await fetch(`https://dummyjson.com/posts/${post.id}`,
-                {
-                    method: "DELETE"
-                }
-            );
-            if(!response.ok){
-                throw new Error(response.status)
-            }
-            const deletedPost = await response.json();
-            
-            const deletedPostIndex = posts.findIndex(post => post.id === deletedPost.id);
-            posts.splice(deletedPostIndex, 1);
-            postElement.remove();
-        }catch(error){
-            showMessage("unable to delete post...");
-            console.log(error);
-        }
-    });
-    
-    return removeBtn;
-}
-
-
-function createEditBtn(editField){
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-
-    editBtn.addEventListener("click", () => {
-        editField.classList.toggle("hidden");
-    })
-    return editBtn;
-}
-
-function createEditField(post){
-    const editField = document.createElement("div");
-    editField.classList.add("hidden");
-    editField.innerHTML =`
-        <form id ="editForm${post.id}">
-        <label> Title
-            <input type = "text" id = "editTitle${post.id}" name = "editedTitle">
-        </label>
-        <br>
-        <label> Content
-            <textarea id = "editBody${post.id}" name = "editedBody"></textarea>
-        </label>
-        <br>
-        <button type = "submit">Submit</button>
-        
-    </form>
+                    <div class="buttons">
+                        <button class="button" id = "editBtn">Edit</button>
+                        <button class="button delete" id = "deleteBtn">Delete</button> 
+                    </div>
+                        <div class ="editingContainer hidden">
+                            <form class="editForm">
+                                <input type="text" name="newTitle" >
+                                <textarea name="newBody"></textarea>
+                                <button type="submit" class="button">Submit</button>
+                            </form>
+                        </div>
+                        
+                            
+                        
+                </div>
     `;
+    catalog.appendChild(postElement);
+
+    const deleteBtn = postElement.querySelector(`#deleteBtn`);
+    const editBtn = postElement.querySelector(`#editBtn`);
+    const editElement = postElement.querySelector(".editingContainer")
+    const editForm = postElement.querySelector("form");
     
-    //stoppa in title och body i fälten
-    return editField;
+    deleteBtn.addEventListener("click", async()=>{
+
+        const deletedPost = await deletePost(post);
+        const deleteIndex = posts.findIndex(post => post.id === deletedPost.id)
+        posts.splice(deleteIndex, 1);
+        postElement.remove();
+        countElement.textContent = posts.length;
+        
+    });
     
-}
-async function editPost(post, posts){
-    //hur ska jag komma runt att jag behöver post för den här funktionen
-    //behöver rendera posts igen efter fetch
-    const editForm = document.querySelector(`#editForm${post.id}`);
-    const titleInput = document.querySelector(`#editTitle${post.id}`);
-    const bodyInput = document.querySelector(`#editBody${post.id}`);
-    titleInput.value = post.title;
-    bodyInput.value = post.body
-    editForm.addEventListener("submit", async (e) => {
+    editBtn.addEventListener("click", () => {
+        editElement.classList.toggle("hidden");
+    });
+    editForm.addEventListener("submit", async(e) => {
         e.preventDefault();
-        
         const formData = new FormData(editForm);
-        const {editedTitle, editedBody} = Object.fromEntries(formData);
-
-        try{
-            const response = await fetch(`https://dummyjson.com/posts/${post.id}`, 
-                {
-                    method: "PATCH",
-                    headers:{
-                        "content-type": "application/json"
-                    },
-                    body:JSON.stringify({
-                        title: editedTitle,
-                        body: editedBody
-                    })
-                }
-            );
-            if(!response.ok){
-                throw new Error(console.log(response.status))
-            }
-            const editedPost = await response.json();
-            const replaceIndex = posts.indexOf(post);
-            posts.splice(replaceIndex, 1, editedPost);
-            console.log(editedPost)
-            displayElement.innerHTML = "";
-            posts.forEach(post => {
-        renderPostElements(post, posts);
-       
-    })
-        }catch(error){
-            showMessage("Unable to edit post...")
-            console.log(error)
-        }
+        const {newTitle, newBody} = Object.fromEntries(formData);
+        const editedPost = await editPost(newTitle, newBody, post);
         
+        const replaceIndex = posts.findIndex(anyPost => anyPost.id === editedPost.id)
+        posts.splice(replaceIndex, 1, editedPost);
+        
+        postElement.remove();
+        renderPostElements(post, posts, comments);
+        
+
     })
 
-   
+}
+async function deletePost(post){
+    try{
+        const response = await fetch(`https://dummyjson.com/posts/${post.id}`, {
+            method: "DELETE"
+        })
+        if(!response.ok){
+            throw new Error(console.log(response.status))
+        }
+        const deletedPost = await response.json();
+        
+        // console.log(posts);
+        return deletedPost;
+    }catch(error){
+        showMessage("cant delete post");
+        console.log(error)
+    }
 }
 
-function postPage(post){
-   
-    window.location.href = `post.html?id=${post.id}`
+async function editPost(newTitle, newBody, post){
+    try{
+        const response = await fetch(`https://dummyjson.com/posts/${post.id}`, {
+            method: "PUT",
+            headers:{
+                "content-type": "application/json",
+            },
+            body:JSON.stringify({
+                title: newTitle,
+                body: newBody
+            })
+        });
+        if(!response.ok){
+            throw new Error(console.log(response.status))
+        }
+        const updatedPost = await response.json();
+        return updatedPost;
+    }catch(error){
+        showMessage("cant edit post");
+        console.log(error);
+    }
+}
+
+function filterPosts(posts, comments, filter){
+    
+    const filteredPosts = posts.filter(post => {
+        const textMatch = post.title.toLowerCase().trim().includes(filter.searchText.toLowerCase().trim()) || !filter.searchText;
+        return textMatch;
+    });
+    catalog.innerHTML = "";
+    filteredPosts.forEach((post) => {
+        renderPostElements(post, posts, comments)
+    });
+}
+async function sortPosts(option, comments){
+    switch(option){
+        case "sortByViews":
+            try{
+                const response = await fetch(`https://dummyjson.com/posts?limit=15&&sortBy=views&order=desc`)
+                if(!response.ok){
+                    throw new Error(console.log(response.status))
+                }
+                const data = await response.json();
+                const sortedPosts = data.posts;
+
+                sortedPosts.forEach((post) => {
+                    renderPostElements(post, sortedPosts, comments);
+                });
+            }catch(error){showMessage(`cant sort by "most viewed"`);
+                console.log(error)
+            }
+        break;
+
+        case "sortByLikes":
+           try{
+                const response = await fetch(`https://dummyjson.com/posts?limit=15&&sortBy=reactions.likes&order=desc`)
+                if(!response.ok){
+                    throw new Error(console.log(response.status))
+                }
+                const data = await response.json();
+                const sortedPosts = data.posts;
+
+                sortedPosts.forEach((post) => {
+                    renderPostElements(post, sortedPosts, comments);
+                });
+            }catch(error){showMessage(`cant sort by "Most liked"`);
+                console.log(error)
+            } 
+        break;
+
+        default:
+            try{
+                const response = await fetch(`https://dummyjson.com/posts?limit=15`)
+                if(!response.ok){
+                    throw new Error(console.log(response.status))
+                }
+                const data = await response.json();
+                const sortedPosts = data.posts;
+
+                sortedPosts.forEach((post) => {
+                    renderPostElements(post, sortedPosts, comments);
+                });
+            }catch(error){showMessage(`cant sort by "First added"`);
+                console.log(error)
+            }
+    }
 }
