@@ -31,7 +31,6 @@ main{
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid black;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -50,7 +49,7 @@ main{
 #catalog{
     background: var(--secondary-bg);
     padding: .5rem;
-    width: 90vw;
+    width: 60vw;
     min-height: 30vh;
     height: fit-content;
     max-height: 100vh;
@@ -58,7 +57,7 @@ main{
     margin: 1rem;
     overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1;
     gap: 10px;
     justify-items: center;
     border-radius: 5px;
@@ -67,7 +66,7 @@ main{
     
 }
 .post-card{
-    min-width: 25vh;
+    min-width: 35vh;
     width: fit-content;
     max-width: 40vh;
     min-height: 45vw;
@@ -136,7 +135,7 @@ main{
 .button{
     background: rgba(151, 128, 77, .5);
     color: var(--text-color);
-    width: fit-content;
+    width: 45%;
     font-size: .75rem;
     margin: 0 auto;
     border: 1px solid rgba(46, 39, 24, .4);
@@ -171,32 +170,45 @@ main{
 }
 
 footer{
-    height: 10vh;
+    height: 5vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 1px solid black;
+    border-top: 1px solid rgba(46, 39, 24, .1);
+    background: var(--secondary-bg);
 }
 
-
+@media all and (min-width: 459px){
+    #catalog{
+        grid-template-columns: repeat(2, 1fr);
+        width: 90vw;
+    }
+    .post-card{
+        min-width: 35vh;
+        max-width: 40vh;
+        min-height: 45vw;
+        max-height: 35vw;
+    }
+}
 @media all and (min-width: 480px){
     :root{
     font-size: 16px;
     }
 
     #catalog{
-    grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        width: 90vw;
     }
 
     .post-card{
-    min-width: 20vh;
-    max-width: 40vh;
-    min-height: 30vw;
-    max-height: 35vw;
+        min-width: 20vh;
+        max-width: 40vh;
+        min-height: 30vw;
+        max-height: 35vw;
     }
     .post-card p{
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
     }
 }
 
@@ -207,6 +219,7 @@ footer{
 
     #catalog{
     grid-template-columns: repeat(4, 1fr);
+    width: 90vw;
     }
     .post-card{
     min-width: 20vh;

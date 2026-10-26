@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+:root{
+    font-size: 14px;
+    --secondary-bg-color: 200, 194, 182;
+    --primary-bg-color: 247, 238, 222;
+    --text-color: 40, 30, 22;
+    --temp: rgb(40, 30, 22);
+    
+    background-color: rgb(var(--primary-bg-color));
+    color: var(--text-color);
+}
+header{
+    border-bottom: 1px solid;
+    border-color: rgb(var(--text-color), .1);
+    background-color: rgb(var(--secondary-bg-color), .5);
+    padding: 1rem;
+    width: 100%;
+    margin: 0 auto;
+}
+a{
+    border: 1px solid;
+    border-color: rgb(var(--text-color), .1);
+    background-color: rgb(var(--secondary-bg-color), .9);
+    text-decoration: none;
+    color: rgb(var(--text-color));
+}
+.body{
+    width: 90%;
+    padding: 1rem;
+    margin: 1rem auto;
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-color: rgb(var(--text-color), .2);
+    background-color: rgb(var(--secondary-bg-color), .3);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.count{
+    border-bottom: 1px solid;
+    border-color: rgb(var(--text-color), .1);
+    background-color: rgb(var(--secondary-bg-color), .5);
+    font-size: 1.25rem;
+    width: 100%;
+    text-align: center;
+}
+#message{
+    width: fit-content;
+    margin: 0 auto;
+}
+.comments{
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-color: rgb(var(--text-color), .3);
+    background-color: rgb(var(--secondary-bg-color), .3);
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 3px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+.comment{
+    width: 100%;
+    background-color: rgb(var(--secondary-bg));
+    border-bottom: 1px solid;
+    border-radius: 2px;
+    border-color: rgb(var(--text-color), .3);
+}
+#likes{
+    background-color: rgb(var(--secondary-bg-color), .3);
+}
+
+#newComment{
+    display: flex;
+    justify-content: center;
+}
+label{
+    background-color: rgb(var(--secondary-bg-color), .9);
+    padding: .25rem;
+    border-bottom-left-radius: 3px;
+}
+footer{
+    display: flex;
+    height: 5vh;
+    width: 100%;
+    background-color: rgb(var(--secondary-bg-color));
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    
+}

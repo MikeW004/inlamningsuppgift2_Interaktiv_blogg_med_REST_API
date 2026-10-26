@@ -98,7 +98,9 @@ async function renderPostElements(post, posts, comments){
     const editBtn = postElement.querySelector(`#editBtn`);
     const editElement = postElement.querySelector(".editingContainer")
     const editForm = postElement.querySelector("form");
-    
+    const titleElement = postElement.querySelector("h4");
+    const bodyElement = postElement.querySelector("p");
+
     deleteBtn.addEventListener("click", async()=>{
 
         const deletedPost = await deletePost(post);
@@ -106,6 +108,7 @@ async function renderPostElements(post, posts, comments){
         posts.splice(deleteIndex, 1);
         postElement.remove();
         countElement.textContent = posts.length;
+        showMessage("Post deleted")
         
     });
     
@@ -117,15 +120,22 @@ async function renderPostElements(post, posts, comments){
         const formData = new FormData(editForm);
         const {newTitle, newBody} = Object.fromEntries(formData);
         const editedPost = await editPost(newTitle, newBody, post);
+        if(editedPost.title && editedPost.body){
+            const replaceIndex = posts.findIndex(anyPost => anyPost.id === editedPost.id)
+            posts.splice(replaceIndex, 1, editedPost);
         
-        const replaceIndex = posts.findIndex(anyPost => anyPost.id === editedPost.id)
-        posts.splice(replaceIndex, 1, editedPost);
-        
-        postElement.remove();
-        renderPostElements(post, posts, comments);
-        
+            postElement.remove();
+            renderPostElements(editedPost, posts, comments);
+            showMessage("Post edited");
+        }else{
+            showMessage("Title and body required..");
+        }
+    });
+    titleElement.addEventListener("click", () => {
+        window.location.href = `post.html?id=${post.id}`;
+    });
 
-    })
+
 
 }
 async function deletePost(post){
@@ -201,6 +211,7 @@ async function sortPosts(option, comments){
 
         case "sortByLikes":
            try{
+                showMessage("Sorting posts...")
                 const response = await fetch(`https://dummyjson.com/posts?limit=15&&sortBy=reactions.likes&order=desc`)
                 if(!response.ok){
                     throw new Error(console.log(response.status))
@@ -218,6 +229,7 @@ async function sortPosts(option, comments){
 
         default:
             try{
+                showMessage("Sorting posts...")
                 const response = await fetch(`https://dummyjson.com/posts?limit=15`)
                 if(!response.ok){
                     throw new Error(console.log(response.status))
