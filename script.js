@@ -1,6 +1,7 @@
 const catalog = document.querySelector("#catalog");
 const messageElement = document.querySelector("#message");
-const searchPost = document.querySelector("#searchPost");
+const postSearch = document.querySelector("#searchPost");
+const tagsSearch = document.querySelector("#searchTags");
 const sortCatalog = document.querySelector("#sortPosts");
 const countElement = document.querySelector("#postCount");
 const filter = 
@@ -21,18 +22,23 @@ async function renderPosts(){
     const comments = postInfo.comments;
     
     posts.forEach((post) => {
+        console.log(post.tags)
         renderPostElements(post, posts, comments);
         countElement.textContent = posts.length;
     });
 
-    searchPost.addEventListener("input", (e) => {
+    postSearch.addEventListener("input", (e) => {
         filter.searchText = e.target.value;
         filterPosts(posts, comments, filter);
-    })
+    });
+    tagsSearch.addEventListener("input", (e) => {
+        filter.searchTags = e.target.value;
+        filterPosts(posts, comments, filter);
+    });
     sortCatalog.addEventListener("change", (e) => {
         catalog.innerHTML = "";
         sortPosts(e.target.value, comments);
-    })
+    });
     
 
 }
@@ -41,7 +47,7 @@ async function getPostsInfo(){
         showMessage("Loading posts...")
         const [postResponse, commentsResponse] = await Promise.all([
             fetch(`https://dummyjson.com/posts?limit=15`), 
-            fetch(`https://dummyjson.com/comments?limit=15`)
+            fetch(`https://dummyjson.com/comments?limit=0`)
         ]);
         if(!postResponse.ok){
             throw new Error(console.log(postResponse.statusText));
@@ -63,7 +69,7 @@ async function getPostsInfo(){
 }
 
 async function renderPostElements(post, posts, comments){
-    const postComments = comments.filter(comment => comment.PostId === post.id);
+    const postComments = comments.filter(comment => comment.postId === post.id);
     const postElement = document.createElement("div");
     postElement.classList.add("post-card");
     postElement.innerHTML = `
@@ -147,8 +153,6 @@ async function deletePost(post){
             throw new Error(console.log(response.status))
         }
         const deletedPost = await response.json();
-        
-        // console.log(posts);
         return deletedPost;
     }catch(error){
         showMessage("cant delete post");
@@ -183,13 +187,22 @@ function filterPosts(posts, comments, filter){
     
     const filteredPosts = posts.filter(post => {
         const textMatch = post.title.toLowerCase().trim().includes(filter.searchText.toLowerCase().trim()) || !filter.searchText;
-        return textMatch;
+        
+        const tagList = filter.searchTags.split(",").map(tag => tag.toLowerCase().trim());
+        const tagMatch = tagList.every(tag => {
+            return post.tags.some(postTag => postTag.includes(tag));
+        }) || filter.searchTags === "";
+        
+        return textMatch && tagMatch;
+
     });
     catalog.innerHTML = "";
     filteredPosts.forEach((post) => {
-        renderPostElements(post, posts, comments)
+        renderPostElements(post, posts, comments);
     });
+    countElement.textContent = filteredPosts.length;
 }
+
 async function sortPosts(option, comments){
     switch(option){
         case "sortByViews":
@@ -222,6 +235,7 @@ async function sortPosts(option, comments){
                 sortedPosts.forEach((post) => {
                     renderPostElements(post, sortedPosts, comments);
                 });
+                showMessage("");
             }catch(error){showMessage(`cant sort by "Most liked"`);
                 console.log(error)
             } 
