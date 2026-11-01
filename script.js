@@ -22,7 +22,6 @@ async function renderPosts(){
     const comments = postInfo.comments;
     
     posts.forEach((post) => {
-        console.log(post.tags)
         renderPostElements(post, posts, comments);
         countElement.textContent = posts.length;
     });
@@ -77,8 +76,8 @@ async function renderPostElements(post, posts, comments){
                 <p>${post.body}</p>
                 <div class ="card-bottom-panel">
                     <p class="card-stats">
-                        <span>views: ${post.views}</span> 
-                        <span>Likes: ${post.reactions.likes}</span>
+                        <span><i class="fa-solid fa-glasses"></i>${post.views}</span> 
+                        <span><i class="fa-regular fa-thumbs-up"></i>${post.reactions.likes}</span>
                         <span>Comments: ${postComments.length}</span>
                     </p>
 
@@ -114,7 +113,7 @@ async function renderPostElements(post, posts, comments){
         posts.splice(deleteIndex, 1);
         postElement.remove();
         countElement.textContent = posts.length;
-        showMessage("Post deleted")
+        showMessage("Post deleted");
         
     });
     
@@ -194,7 +193,6 @@ function filterPosts(posts, comments, filter){
         }) || filter.searchTags === "";
         
         return textMatch && tagMatch;
-
     });
     catalog.innerHTML = "";
     filteredPosts.forEach((post) => {
@@ -207,13 +205,14 @@ async function sortPosts(option, comments){
     switch(option){
         case "sortByViews":
             try{
+                showMessage("sorting by views...")
                 const response = await fetch(`https://dummyjson.com/posts?limit=15&&sortBy=views&order=desc`)
                 if(!response.ok){
                     throw new Error(console.log(response.status))
                 }
                 const data = await response.json();
                 const sortedPosts = data.posts;
-
+                setTimeout(() => {showMessage("")},1000);
                 sortedPosts.forEach((post) => {
                     renderPostElements(post, sortedPosts, comments);
                 });
@@ -224,18 +223,17 @@ async function sortPosts(option, comments){
 
         case "sortByLikes":
            try{
-                showMessage("Sorting posts...")
+                showMessage("Sorting by likes...")
                 const response = await fetch(`https://dummyjson.com/posts?limit=15&&sortBy=reactions.likes&order=desc`)
                 if(!response.ok){
                     throw new Error(console.log(response.status))
                 }
                 const data = await response.json();
                 const sortedPosts = data.posts;
-
+                setTimeout(() => {showMessage("")},1000);
                 sortedPosts.forEach((post) => {
                     renderPostElements(post, sortedPosts, comments);
                 });
-                showMessage("");
             }catch(error){showMessage(`cant sort by "Most liked"`);
                 console.log(error)
             } 
@@ -243,19 +241,19 @@ async function sortPosts(option, comments){
 
         default:
             try{
-                showMessage("Sorting posts...")
+                showMessage("Sorting by added date...")
                 const response = await fetch(`https://dummyjson.com/posts?limit=15`)
                 if(!response.ok){
                     throw new Error(console.log(response.status))
                 }
                 const data = await response.json();
                 const sortedPosts = data.posts;
-
+                setTimeout(() => {showMessage("")},1000);
                 sortedPosts.forEach((post) => {
                     renderPostElements(post, sortedPosts, comments);
                 });
             }catch(error){showMessage(`cant sort by "First added"`);
-                console.log(error)
+                console.log(error);
             }
     }
 }
